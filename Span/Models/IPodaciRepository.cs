@@ -4,8 +4,7 @@ namespace Span.Models
 {
     public interface IPodaciRepository
     {
-        IEnumerable<Podaci> GetAllPodaci { get; }
-
-        string WriteAllPodaci(IEnumerable<Podaci> podaci);
+        public IEnumerable<Podaci> GetAllPodaci();
+        public string WriteAllPodaci(IEnumerable<Podaci> podaci);
     }
 }

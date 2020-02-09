@@ -2,7 +2,6 @@
 {
     public class Podaci
     {
-        public int PodaciID { get; set; }
         public string Ime { get; set; }
         public string Prezime { get; set; }
         public string PBr { get; set; }

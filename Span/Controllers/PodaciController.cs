@@ -18,7 +18,7 @@ namespace Span.Controllers
 
         public ViewResult List()
         {
-            return View(_podaciRepository.GetAllPodaci);
+            return View(_podaciRepository.GetAllPodaci());
         }
     }
 }
