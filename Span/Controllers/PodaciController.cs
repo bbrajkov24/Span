@@ -19,6 +19,8 @@ namespace Span.Controllers
 
             var podaci = await _podaciRepository.GetAllFromSQL();
 
+            //var podaci = _podaciRepository.GetAllFromCSV();
+
             return View(podaci);
         }
     }

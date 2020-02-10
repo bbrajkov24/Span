@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Span.Models
@@ -11,10 +13,19 @@ namespace Span.Models
     public class PodaciRepository : IPodaciRepository
     {
         private readonly IConfiguration _configuration;
+        private readonly string VALIDATION_LENGTH_LESS_THAN_50;
+        private readonly string VALIDATION_LENGTH_LESS_THAN_20;
+        private readonly string VALIDATION_FIELD_EMPTY;
+        private readonly string VALIDATION_NUMBER;
+
 
         public PodaciRepository(IConfiguration configuration)
         {
             _configuration = configuration;
+            VALIDATION_LENGTH_LESS_THAN_50 = "Length of {0} must be less than 50 characters. ";
+            VALIDATION_LENGTH_LESS_THAN_20 = "Length of {0} must be less than 20 characters. ";
+            VALIDATION_FIELD_EMPTY = "{0} can't be empty. ";
+            VALIDATION_NUMBER = "{0} can only contain digits. ";
         }
 
         public IEnumerable<Podaci> GetAllFromCSV()
@@ -30,17 +41,66 @@ namespace Span.Models
                 {
                     string[] strRow = line.Split(';');
 
-                    podaci.Add(new Podaci
-                    {
-                        Ime = strRow[0],
-                        Prezime = strRow[1],
-                        PBr = strRow[2],
-                        Grad = strRow[3],
-                        Telefon = strRow[4]
-                    });
+                    string message = ValidateRow(strRow);
+                    
+                    podaci.Add(MapRow(strRow, message));                  
                 }
             }
             return podaci;
+        }
+
+        private Podaci MapRow(string[] strRow, string message)
+        {
+            return new Podaci
+            {
+                Ime = strRow[0],
+                Prezime = strRow[1],
+                PBr = strRow[2],
+                Grad = strRow[3],
+                Telefon = strRow[4],
+                IsValid = String.IsNullOrWhiteSpace(message),
+                ValidationMessage = message              
+            };
+        }
+
+        private string ValidateRow(string[] strRow)
+        {
+            StringBuilder message = new StringBuilder();
+
+            if (String.IsNullOrWhiteSpace(strRow[0]))
+                message.Append(String.Format(VALIDATION_FIELD_EMPTY, "Ime"));
+            if (strRow[0].Length > 50)
+                message.Append(String.Format(VALIDATION_LENGTH_LESS_THAN_50, "Ime"));
+
+            if (String.IsNullOrWhiteSpace(strRow[1]))
+                message.Append(String.Format(VALIDATION_FIELD_EMPTY, "Prezime"));
+            if (strRow[1].Length > 50)
+                message.Append(String.Format(VALIDATION_LENGTH_LESS_THAN_50, "Prezime"));
+
+            if (String.IsNullOrWhiteSpace(strRow[2]))
+                message.Append(String.Format(VALIDATION_FIELD_EMPTY, "Poštanski Broj"));
+            if (strRow[2].Length > 20)
+                message.Append(String.Format(VALIDATION_LENGTH_LESS_THAN_20, "Poštanski Broj"));
+            if (!IsConvertableToInt(strRow[2]))
+                message.Append(String.Format(VALIDATION_NUMBER, "Poštanski Broj"));
+
+            if (String.IsNullOrWhiteSpace(strRow[3]))
+                message.Append(String.Format(VALIDATION_FIELD_EMPTY, "Grad"));
+            if (strRow[3].Length > 50)
+                message.Append(String.Format(VALIDATION_LENGTH_LESS_THAN_50, "Grad"));
+
+            if (String.IsNullOrWhiteSpace(strRow[4]))
+                message.Append(String.Format(VALIDATION_FIELD_EMPTY, "Telefon"));
+            if (strRow[4].Length > 20)
+                message.Append(String.Format(VALIDATION_LENGTH_LESS_THAN_20, "Telefon"));
+
+            return message.ToString().TrimEnd();
+        }
+
+        private bool IsConvertableToInt(string data)
+        {
+            int num;
+            return int.TryParse(data, out num);
         }
 
         public async Task<List<Podaci>> GetAllFromSQL()
@@ -68,9 +128,7 @@ namespace Span.Models
 
         public async Task<string> WriteAll()
         {
-            var podaciCSV = GetAllFromCSV();
-
-            List<Podaci> podaci = new List<Podaci>();
+            var podaciCSV = GetAllFromCSV().Where(p => p.IsValid);
 
             DataTable csvData = new DataTable();
             csvData.Columns.Add("Ime", typeof(string));

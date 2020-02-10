@@ -8,14 +8,16 @@
     <tbody>
         @foreach (var podatak in Model)
         {
-            <tr>
-                @*<td>@podatak.PodaciID</td>*@
-                <td>@podatak.Ime</td>
-                <td>@podatak.Prezime</td>
-                <td>@podatak.PBr</td>
-                <td>@podatak.Grad</td>
-                <td>@podatak.Telefon</td>
-            </tr>
+        <tr>
+            @*<td>@podatak.PodaciID</td>*@
+            <td>@podatak.Ime</td>
+            <td>@podatak.Prezime</td>
+            <td>@podatak.PBr</td>
+            <td>@podatak.Grad</td>
+            <td>@podatak.Telefon</td>
+            <td>@podatak.IsValid</td>
+            <td>@podatak.ValidationMessage</td>
+        </tr>
         }
     </tbody>
 </table>
