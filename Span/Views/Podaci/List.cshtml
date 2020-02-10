@@ -1,23 +1,25 @@
 ﻿@model List<Podaci>
 
-<table>
-    <thead>
-    </thead>
-    <tfoot>
-    </tfoot>
-    <tbody>
-        @foreach (var podatak in Model)
-        {
-        <tr>
-            @*<td>@podatak.PodaciID</td>*@
-            <td>@podatak.Ime</td>
-            <td>@podatak.Prezime</td>
-            <td>@podatak.PBr</td>
-            <td>@podatak.Grad</td>
-            <td>@podatak.Telefon</td>
-            <td>@podatak.IsValid</td>
-            <td>@podatak.ValidationMessage</td>
-        </tr>
-        }
-    </tbody>
-</table>
+<div class="table-responsive">
+    <table class="table table-hover">
+        <thead>
+        </thead>
+        <tfoot>
+        </tfoot>
+        <tbody>
+            @{ int rowNo = 0; }
+            @foreach (var podatak in Model)
+            {
+                <tr @(@podatak.IsValid ? String.Empty : "class=table-danger") data-toggle=tooltip data-placement=top data-original-title="@podatak.ValidationMessage">
+                    <th scope="row">@(rowNo += 1)</th>
+                    <td>@podatak.Ime</td>
+                    <td>@podatak.Prezime</td>
+                    <td>@podatak.PBr</td>
+                    <td>@podatak.Grad</td>
+                    <td>@podatak.Telefon</td>
+                    <td>@podatak.ValidationMessage</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

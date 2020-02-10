@@ -15,11 +15,11 @@ namespace Span.Controllers
 
         public async Task<ViewResult> List()
         {
-            var errorMessage = await _podaciRepository.WriteAll();
+            //var errorMessage = await _podaciRepository.WriteAll();
 
-            var podaci = await _podaciRepository.GetAllFromSQL();
+            //var podaci = await _podaciRepository.GetAllFromSQL();
 
-            //var podaci = _podaciRepository.GetAllFromCSV();
+            var podaci = _podaciRepository.GetAllFromCSV();
 
             return View(podaci);
         }
