@@ -13,13 +13,18 @@ namespace Span.Controllers
             _podaciRepository = podaciRepository;
         }
 
-        public async Task<ViewResult> List()
+        public ViewResult List()
         {
-            //var errorMessage = await _podaciRepository.WriteAll();
-
-            //var podaci = await _podaciRepository.GetAllFromSQL();
-
             var podaci = _podaciRepository.GetAllFromCSV();
+
+            return View(podaci);
+        }
+
+        public async Task<ViewResult> Save()
+        {
+            ViewBag.errorMessage = await _podaciRepository.WriteAll();
+
+            var podaci = await _podaciRepository.GetAllFromSQL();
 
             return View(podaci);
         }

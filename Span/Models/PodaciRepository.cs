@@ -22,6 +22,7 @@ namespace Span.Models
         public PodaciRepository(IConfiguration configuration)
         {
             _configuration = configuration;
+
             VALIDATION_LENGTH_LESS_THAN_50 = "Length of {0} must be less than 50 characters. ";
             VALIDATION_LENGTH_LESS_THAN_20 = "Length of {0} must be less than 20 characters. ";
             VALIDATION_FIELD_EMPTY = "{0} can't be empty. ";
@@ -47,60 +48,6 @@ namespace Span.Models
                 }
             }
             return podaci;
-        }
-
-        private Podaci MapRow(string[] strRow, string message)
-        {
-            return new Podaci
-            {
-                Ime = strRow[0],
-                Prezime = strRow[1],
-                PBr = strRow[2],
-                Grad = strRow[3],
-                Telefon = strRow[4],
-                IsValid = String.IsNullOrWhiteSpace(message),
-                ValidationMessage = message              
-            };
-        }
-
-        private string ValidateRow(string[] strRow)
-        {
-            StringBuilder message = new StringBuilder();
-
-            if (String.IsNullOrWhiteSpace(strRow[0]))
-                message.Append(String.Format(VALIDATION_FIELD_EMPTY, "Ime"));
-            if (strRow[0].Length > 50)
-                message.Append(String.Format(VALIDATION_LENGTH_LESS_THAN_50, "Ime"));
-
-            if (String.IsNullOrWhiteSpace(strRow[1]))
-                message.Append(String.Format(VALIDATION_FIELD_EMPTY, "Prezime"));
-            if (strRow[1].Length > 50)
-                message.Append(String.Format(VALIDATION_LENGTH_LESS_THAN_50, "Prezime"));
-
-            if (String.IsNullOrWhiteSpace(strRow[2]))
-                message.Append(String.Format(VALIDATION_FIELD_EMPTY, "Poštanski Broj"));
-            if (strRow[2].Length > 20)
-                message.Append(String.Format(VALIDATION_LENGTH_LESS_THAN_20, "Poštanski Broj"));
-            if (!IsConvertableToInt(strRow[2]))
-                message.Append(String.Format(VALIDATION_NUMBER, "Poštanski Broj"));
-
-            if (String.IsNullOrWhiteSpace(strRow[3]))
-                message.Append(String.Format(VALIDATION_FIELD_EMPTY, "Grad"));
-            if (strRow[3].Length > 50)
-                message.Append(String.Format(VALIDATION_LENGTH_LESS_THAN_50, "Grad"));
-
-            if (String.IsNullOrWhiteSpace(strRow[4]))
-                message.Append(String.Format(VALIDATION_FIELD_EMPTY, "Telefon"));
-            if (strRow[4].Length > 20)
-                message.Append(String.Format(VALIDATION_LENGTH_LESS_THAN_20, "Telefon"));
-
-            return message.ToString().TrimEnd();
-        }
-
-        private bool IsConvertableToInt(string data)
-        {
-            int num;
-            return int.TryParse(data, out num);
         }
 
         public async Task<List<Podaci>> GetAllFromSQL()
@@ -157,6 +104,62 @@ namespace Span.Models
             }
         }
 
+        #region Private Methods
+
+        private Podaci MapRow(string[] strRow, string message)
+        {
+            return new Podaci
+            {
+                Ime = strRow[0],
+                Prezime = strRow[1],
+                PBr = strRow[2],
+                Grad = strRow[3],
+                Telefon = strRow[4],
+                IsValid = String.IsNullOrWhiteSpace(message),
+                ValidationMessage = message
+            };
+        }
+
+        private string ValidateRow(string[] strRow)
+        {
+            StringBuilder message = new StringBuilder();
+
+            if (String.IsNullOrWhiteSpace(strRow[0]))
+                message.Append(String.Format(VALIDATION_FIELD_EMPTY, "Ime"));
+            if (strRow[0].Length > 50)
+                message.Append(String.Format(VALIDATION_LENGTH_LESS_THAN_50, "Ime"));
+
+            if (String.IsNullOrWhiteSpace(strRow[1]))
+                message.Append(String.Format(VALIDATION_FIELD_EMPTY, "Prezime"));
+            if (strRow[1].Length > 50)
+                message.Append(String.Format(VALIDATION_LENGTH_LESS_THAN_50, "Prezime"));
+
+            if (String.IsNullOrWhiteSpace(strRow[2]))
+                message.Append(String.Format(VALIDATION_FIELD_EMPTY, "Poštanski Broj"));
+            if (strRow[2].Length > 20)
+                message.Append(String.Format(VALIDATION_LENGTH_LESS_THAN_20, "Poštanski Broj"));
+            if (!IsConvertableToInt(strRow[2]))
+                message.Append(String.Format(VALIDATION_NUMBER, "Poštanski Broj"));
+
+            if (String.IsNullOrWhiteSpace(strRow[3]))
+                message.Append(String.Format(VALIDATION_FIELD_EMPTY, "Grad"));
+            if (strRow[3].Length > 50)
+                message.Append(String.Format(VALIDATION_LENGTH_LESS_THAN_50, "Grad"));
+
+            if (String.IsNullOrWhiteSpace(strRow[4]))
+                message.Append(String.Format(VALIDATION_FIELD_EMPTY, "Telefon"));
+            if (strRow[4].Length > 20)
+                message.Append(String.Format(VALIDATION_LENGTH_LESS_THAN_20, "Telefon"));
+
+            return message.ToString().TrimEnd();
+        }
+
+        private bool IsConvertableToInt(string data)
+        {
+            int num;
+            return int.TryParse(data, out num);
+        }    
+
         private void AddRow(DataTable dataTable, Podaci data)
         {
             var row = dataTable.NewRow();
@@ -180,5 +183,7 @@ namespace Span.Models
                 Telefon = reader["Telefon"].ToString(),
             };
         }
+
+        #endregion Private Methods
     }
 }

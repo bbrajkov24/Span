@@ -1,4 +1,8 @@
-﻿@model IEnumerable<Podaci>
+﻿@model List<Podaci>
+
+<div class="py-3 alert @(@ViewBag.errorMessage.Contains("unique rows inserted") ? "alert-primary": "alert-danger")" role="alert">
+    @ViewBag.errorMessage
+</div>
 
 <div class="table-responsive">
     <table class="table table-hover">
@@ -10,7 +14,7 @@
             @{ int rowNo = 0; }
             @foreach (var podatak in Model)
             {
-                <tr @(@podatak.IsValid ? String.Empty : "class=table-danger") data-toggle=tooltip data-placement=top data-original-title="@podatak.ValidationMessage">
+                <tr>
                     <th scope="row">@(rowNo += 1)</th>
                     <td>@podatak.Ime</td>
                     <td>@podatak.Prezime</td>
