@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Span.Models;
 
@@ -16,9 +13,13 @@ namespace Span.Controllers
             _podaciRepository = podaciRepository;
         }
 
-        public ViewResult List()
+        public async Task<ViewResult> List()
         {
-            return View(_podaciRepository.GetAllPodaci());
+            var errorMessage = await _podaciRepository.WriteAll();
+
+            var podaci = await _podaciRepository.GetAllFromSQL();
+
+            return View(podaci);
         }
     }
 }
